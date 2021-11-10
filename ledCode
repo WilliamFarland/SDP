@@ -1,0 +1,73 @@
+import board
+import adafruit_dotstar as dotstar
+import time
+import random
+
+# Prints out a list of all of the boards pins
+#print(dir(board))
+
+br = 0.2 # brightness of keys
+numLEDonKey = 5 # Number of LEDs per Key (5.5 in keys -> 17 LEDs)
+numLEDs = 63 # Total # of LEDs on strip
+
+# Currently bit-banging, but traditional sck & mosi is faster and this needs fix
+dots = dotstar.DotStar(board.P9_22, board.P9_18, 63, brightness=br, auto_write=False)
+
+
+#dots = dotstar.DotStar(board.SCLK, board.MOSI, 63, brightness=0.2)
+
+# Lookup table for colors
+red = (255, 0, 0)
+blue = (0, 0, 204)
+green = (0, 204, 0)
+yellow = (255, 255, 0)
+purple = (153, 0, 153)
+off = (0, 0, 0)
+
+#dots[0] = (255, 255, 0)
+#dots.fill(purple)
+
+def randomColor():
+    r = random.randrange(0, 255)
+    g = random.randrange(0, 255)
+    b = random.randrange(0, 255)
+    return (r, g, b)
+    
+def lightupKey(keyNum, color):
+    for i in range(0, numLEDonKey):
+        dots[i+(keyNum-1)*numLEDonKey] = color
+        #time.sleep(0.025)
+    dots.show()
+        
+def clearKeys():
+    dots.fill(off)
+    dots.show()
+
+def fillKeys(color):
+    dots.fill(color)
+    dots.show()
+
+count = 1
+clearKeys()
+while True:
+    #ch = input("Enter a color: ")
+    ch = 'random'
+    if ch == 'red':
+        color = red
+    if ch == 'blue':
+        color = blue
+    if ch == 'yellow':
+        color = yellow
+    if ch == 'purple':
+        color = purple
+    if ch == 'green':
+        color = green
+    if ch == 'off':
+        color = off
+    if ch == 'random':
+        color = randomColor()
+    
+    #fillKeys(color)
+    #clearKeys()
+    lightupKey(random.randrange(1, 10), color)
+    count = count + 1
