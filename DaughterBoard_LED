@@ -5,34 +5,52 @@
 #define DATAPIN    4
 #define CLOCKPIN   5
 
-int testTransfer = 8;
+int transferLine1 = 0;
+int transferLine2 = 1;
+int transferLine3 = 2;
+int transferLine4 = 3;
 
 Adafruit_DotStar strip(NUMKEYS*3, DATAPIN, CLOCKPIN, DOTSTAR_BRG);
 
 void setup() {
   strip.begin(); // Initialize pins for output
   strip.show();  // Turn all LEDs off ASAP
-  pinMode(testTransfer, INPUT);
+  pinMode(transferLine1, INPUT);
+  pinMode(transferLine2, INPUT);
+  pinMode(transferLine3, INPUT);
+  pinMode(transferLine4, INPUT);
 
 }
 
 int c = 0;
 // hard coded for now
 uint32_t color = strip.Color(255, 0, 255);
+uint32_t off = strip.Color(0, 0, 0);
 int key;
 
 void loop() {
-  int testTransferState = digitalRead(testTransfer);
-  // recieve key choice on line 1, 2
-  // recieve color choice on 3, 4, 5
-  // total of 5 data lines from beaglebone
-  if (testTransferState == HIGH) {
-    c = c + 1;
-    key = c;
-    strip.setPixelColor((key-1)*3, color);
-    strip.setPixelColor((key-1)*3+1, color);
-    strip.setPixelColor((key-1)*3+2, color);
-    strip.show();
-  }
-  delay(500);
+  int Line1State = digitalRead(transferLine1);
+  int Line2State = digitalRead(transferLine2);
+  int Line3State = digitalRead(transferLine3);
+  int Line4State = digitalRead(transferLine4);
+
+  if (Line1State == LOW && Line2State == LOW && Line3State == LOW && Line4State == LOW) { key = 1;}
+  if (Line1State == LOW && Line2State == LOW && Line3State == LOW && Line4State == HIGH) { key = 2;}
+  if (Line1State == LOW && Line2State == LOW && Line3State == HIGH && Line4State == LOW) { key = 3;}
+  if (Line1State == LOW && Line2State == LOW && Line3State == HIGH && Line4State == HIGH) { key = 4;}
+  if (Line1State == LOW && Line2State == HIGH && Line3State == LOW && Line4State == LOW) { key = 5;}
+  if (Line1State == LOW && Line2State == HIGH && Line3State == LOW && Line4State == HIGH) { key = 6;}
+  if (Line1State == LOW && Line2State == HIGH && Line3State == HIGH && Line4State == LOW) { key = 7;}
+  if (Line1State == LOW && Line2State == HIGH && Line3State == HIGH && Line4State == HIGH) { key = 8;}
+  if (Line1State == HIGH && Line2State == LOW && Line3State == LOW && Line4State == LOW) { key = 9;}
+  if (Line1State == HIGH && Line2State == LOW && Line3State == LOW && Line4State == HIGH) { key = 10;}
+  
+  strip.setPixelColor((key-1)*3, color);
+  strip.setPixelColor((key-1)*3+1, color);
+  strip.setPixelColor((key-1)*3+2, color);
+  strip.show();
+  delay(2);
+  
+  strip.clear();
+  strip.show();
 }
