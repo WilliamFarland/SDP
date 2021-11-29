@@ -1,0 +1,38 @@
+#include <Adafruit_DotStar.h>
+#include <SPI.h>         // COMMENT OUT THIS LINE FOR GEMMA OR TRINKET
+
+#define NUMKEYS 10
+#define DATAPIN    4
+#define CLOCKPIN   5
+
+int testTransfer = 8;
+
+Adafruit_DotStar strip(NUMKEYS*3, DATAPIN, CLOCKPIN, DOTSTAR_BRG);
+
+void setup() {
+  strip.begin(); // Initialize pins for output
+  strip.show();  // Turn all LEDs off ASAP
+  pinMode(testTransfer, INPUT);
+
+}
+
+int c = 0;
+// hard coded for now
+uint32_t color = strip.Color(255, 0, 255);
+int key;
+
+void loop() {
+  int testTransferState = digitalRead(testTransfer);
+  // recieve key choice on line 1, 2
+  // recieve color choice on 3, 4, 5
+  // total of 5 data lines from beaglebone
+  if (testTransferState == HIGH) {
+    c = c + 1;
+    key = c;
+    strip.setPixelColor((key-1)*3, color);
+    strip.setPixelColor((key-1)*3+1, color);
+    strip.setPixelColor((key-1)*3+2, color);
+    strip.show();
+  }
+  delay(500);
+}
