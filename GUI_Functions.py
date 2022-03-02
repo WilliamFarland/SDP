@@ -1,11 +1,3 @@
-import tkinter
-from tkinter import *
-import sys
-from GUI import *
-from PIL import ImageTk, Image
-from tkinter import filedialog
-import tkinter.font as font
-
 # ---------- Important Variables ----------
 # Monitor screen dimensions
 height = 1080
@@ -98,8 +90,6 @@ def placeNote(w, noteNum, color, on_off, size):
     w.create_rectangle(coords, outline=color, fill=color)
 
 
-
-
 def tempConvert(slider):
     for i in range(1, slider):
         tempoMod = tempoMod + (2-0.1)/10
@@ -116,14 +106,7 @@ def configureButtons(root, myFont):
     return pause_btn, play_btn, control
 
 
-def configureLabels(root, myFont_large):
-    # Create button labels
-    dropmenu_lbl = tkinter.Label(root, text="Menu Options", font=myFont_large)
-    pause_btn_lbl = tkinter.Label(root, text="Pause Song", font=myFont_large)
-    play_btn_lbl = tkinter.Label(root, text="Play Song", font=myFont_large)
-    slider_lbl = tkinter.Label(root, text="Tempo Control", font=myFont_large)
 
-    return dropmenu_lbl, pause_btn_lbl, play_btn_lbl, slider_lbl
 
 
 
