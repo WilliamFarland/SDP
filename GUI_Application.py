@@ -104,6 +104,7 @@ class mainWindow:
         self.configureDialog()
         self.configureLogo()
         self.sheetMusic = SheetMusicGraphics("Sheet Music 1", self.mainCanvas, self.root)
+        self.placeObjects()
 
     def configureKeyboard(self):
         # Canvas for Image creation
@@ -176,6 +177,34 @@ class mainWindow:
             self.showValues()
             self.dropMenu_3.prevShow = True
 
+    def placeObjects(self):
+        self.mainCanvas.grid(row=10, column=0, columnspan=40, rowspan=50)
+        self.mainCanvas.configure(background="white")
+        self.dialog.grid(row=1, column=3, columnspan=30, rowspan=5, padx=10, pady=10)
+        self.keyboard.place(x=52, y=10)
+        self.logo.place(x=1400, y=10)
+        allura = font.Font(family='Roman', size=10, weight='bold')
+        label = tkinter.Label(self.root, text="Team 22", font=allura)
+        label1 = tkinter.Label(self.root, text="SDP", font=allura)
+        label1.place(x=1360, y=15)
+        label.place(x=1350, y=30)
+        self.mainCanvas.create_rectangle(0, 0, 1920, 5, fill="grey")
+        self.sheetMusic.innerCanvas.place(x=0, y=300)
+
+        # Place dropmenu
+        self.dropMenu_1.dropMenuLabel.grid(row=1, column=0, padx=5)
+        self.dropMenu_1.dropMenuObject.grid(row=2, column=0, padx=0, pady=5, rowspan=3)
+        self.dropMenu_1.dropMenuObject.config(width=7)
+
+        self.dropMenu_2.dropMenuLabel.grid(row=1, column=1, padx=5)
+        self.dropMenu_2.dropMenuObject.grid(row=2, column=1, padx=0, rowspan=3)
+
+        self.dropMenu_3.dropMenuLabel.grid(row=1, column=3, padx=5)
+        self.dropMenu_3.dropMenuObject.grid(row=2, column=3, padx=0, rowspan=3)
+        # Place slider
+        self.slider.sliderLabel.grid(row=1, column=4, padx=10)
+        self.slider.sliderObject.grid(row=2, column=4, padx=10)
+
 
 class Btn(mainWindow):
     def __init__(self, root, name, label, btnLabel, myFont, myFont_large):
@@ -191,6 +220,4 @@ class Btn(mainWindow):
         else:
             mainWindow.play = False
             print("Pausing...")
-
-
 

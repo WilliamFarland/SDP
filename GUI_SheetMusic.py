@@ -8,6 +8,17 @@ width = 1920
 imagePath = 'images/'
 
 noteHeight = dict()
+noteHeight['f2'] = 435
+noteHeight['g2'] = 425
+noteHeight['a3'] = 410
+noteHeight['b3'] = 395
+noteHeight['c3'] = 380
+noteHeight['d3'] = 365
+noteHeight['e3'] = 352
+noteHeight['f3'] = 338
+noteHeight['g3'] = 325
+noteHeight['a4'] = 310
+noteHeight['b4'] = 300
 noteHeight['c4'] = 175
 noteHeight['d4'] = 165
 noteHeight['e4'] = 157
@@ -68,7 +79,8 @@ class SheetMusicGraphics:
 
     def drawNotes(self):
         for notes in self.noteList:
-            self.drawNote(notes)
+            if notes.pos < 10:
+                self.drawNote(notes)
 
     def shiftNoteData(self):
         for notes in self.noteList:
@@ -111,7 +123,7 @@ class SheetMusicGraphics:
 
     def drawWholeNote(self, pos, y):
         x = self.midCord[pos - 1]
-        oval = self.innerCanvas.create_oval(x-5, y, x + 30, y + 25, fill='', width=4.5, tags='notes')
+        oval = self.innerCanvas.create_oval(x-7, y-2, x + 30, y + 22, fill='', width=4.5, tags='notes')
 
     def deleteNotes(self):
         self.innerCanvas.delete("notes")
