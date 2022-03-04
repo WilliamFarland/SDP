@@ -6,19 +6,83 @@ import time
 
 control = False
 imagePath = 'images/'
+size = width * 0.75, height * 0.25
 
+# Sleep Quarter Note
+timeQuarter = 1.25
+# Sleep Half Note
+timeHalf = 2.5
+
+
+def wait(window, waitTime):
+    startTime = time.time()
+    while time.time() < startTime + waitTime:
+        #time.sleep(0.001)
+        window.updateWindow()
+        updateKeyboard(window, time.time()-startTime)
+
+
+def updateKeyboard(window, timeElapsed):
+    notesinPlay = []
+    for notes in window.sheetMusic.noteList:
+        if notes.pos == 6:
+            notesinPlay.append(notes)
+
+    if timeElapsed > timeQuarter:
+        # shut off any quarters
+        for notes in notesinPlay:
+            noteName = notes.name
+            if notes.noteType == "Quarter":
+                for keys in note:
+                    vals = note[keys]
+                    vals = vals[2]
+                    if vals == noteName:
+                        noteNum = keys
+                        placeNote(window.keyboard, noteNum, 'blue', 0, size)
+                        break
+    if timeElapsed > timeHalf:
+        # shut off any half notes
+        for notes in notesinPlay:
+            noteName = notes.name
+            if notes.noteType == "Half":
+                for keys in note:
+                    vals = note[keys]
+                    vals = vals[2]
+                    if vals == noteName:
+                        noteNum = keys
+                        placeNote(window.keyboard, noteNum, 'blue', 0, size)
+                        break
+
+    notesinPlay.clear()
+
+
+def keyOn(window, notesinPlay):
+    for notes in notesinPlay:
+        noteName = notes.name
+        for keys in note:
+            vals = note[keys]
+            vals = vals[2]
+            if vals == noteName:
+                noteNum = keys
+                break
+        placeNote(window.keyboard, noteNum, 'black', 1, size)
+
+
+def allOff(window, notesinPlay):
+    for notes in notesinPlay:
+        noteName = notes.name
+        for keys in note:
+            vals = note[keys]
+            vals = vals[2]
+            if vals == noteName:
+                noteNum = keys
+                break
+        placeNote(window.keyboard, noteNum, 'blue', 0, size)
 
 def main():
     # Create Window Object
     # Window Object is main application GUI
     window = mainWindow("Window")
-
-    '''
-    # Testing zone
-    window.sheetMusic.createNoteData("f2", 0, 'Quarter')
-    window.sheetMusic.drawNotes()
-    window.updateWindow()
-    '''
 
     # An initial loop to pause program until a song is selected and the play button is pressed
     # Let the user know why we are waiting.... using the outputDialog function
@@ -41,25 +105,47 @@ def main():
 
     # Extract the data, and timing requirements from the user's chosen song
     SongObject = Song(window.dropMenu_1.path)
+    # Old way of extracting MIDI data
     data, ticks_per_sec = SongObject.rawData, SongObject.ticksPerSec
-
-    timer = 5  # count down
-    while timer:
+    data = SongObject.cleanData
+    timer = 10  # count down
+    c = 0
+    prevBatch = 0
+    batch = 0
+    while batch < 4:
         window.outputDialog(f"Song Starting in {timer} seconds")
         window.updateWindow()
         time.sleep(1)
         timer = timer - 1
+        noteObject = data[c]
+        batch = noteObject.batch
+        if batch > prevBatch:
+            window.sheetMusic.shiftNoteData()
+            prevBatch = batch
+        noteNumber = noteObject.noteNum
+        noteTranslation = note[noteNumber][2]
+        window.sheetMusic.createNoteData(noteTranslation, 10, noteObject.note, 'black')
+        window.sheetMusic.drawNotes()
+        window.updateWindow()
+        wait(window, 0.5)
+        c = c + 1
+
+
     window.outputDialog("Playing...")
 
-    i = 0  # i is a count variable for iterating through the data matrix
-    tempo_modifier = 0.1  # a variable that can be adjusted to speed/slow a song
-    tend = time.time() + (int(data[len(data) - 1][' 0']) / ticks_per_sec)*1/tempo_modifier  # calculates the time at which song is over
+    i = c  # i is a count variable for iterating through the data matrix
+    tempo_modifier = 1  # a variable that can be adjusted to speed/slow a song
+    tend = 10000000000000000000000 + time.time()
     tstart = time.time()  # calculates the start time
-
     # This is the main logic loop of the program its setup to loop until the end of the song has been reached
     # this is relative to the timing specified in tics of the MIDI file
-    prevtimeBatch = 0
+
+    pos = 10
+    sleepTime = 0
+    batchStart = time.process_time()
+    timeStart = 0
     while tstart < tend:
+        #updateKeyboard(window, time.time()-timeStart)
         playPause = window.dropMenu_2.path
         window.outputDialog("Playing...")
 
@@ -68,39 +154,39 @@ def main():
             window.outputDialog("Paused...")
             window.updateWindow()
 
-        batch = 1
-        # If statement checks to see if the time of the next note has been reached
-        timeExtract = int(data[i][' 0'])*1/tempo_modifier
-        if time.time() > (timeExtract / ticks_per_sec + tstart):
-            timeBatch = int(data[i][' 0'])
-            on_off = data[i][' Header'] == " Note_on_c"
-            if timeBatch > prevtimeBatch and on_off:
-                prevtimeBatch = timeBatch
-                batch = batch + 1
-                window.sheetMusic.shiftNoteData()
-                window.sheetMusic.drawNotes()
+        notesinPlay = []
+        flag = [0]
+        for notes in window.sheetMusic.noteList:
+            if notes.pos == 6:
+                notesinPlay.append(notes)
+        for notes in notesinPlay:
+            if notes.noteType == "Quarter":
+                flag.append(timeQuarter)
+            if notes.noteType == "Half":
+                flag.append(timeHalf)
 
-            if batch > 9:
-                batch = 0
+        sleepTime = max(flag)
 
-            # from the data, we can extract the proper note, as well as if the instruction is an on or off signal
-            on_off, noteNum = iterateSong(data, i)
-            noteTranslation = note[noteNum][2]
-            window.sheetMusic.createNoteData(noteTranslation, batch, 'Quarter')
-            # future color option for when we develop color logic
-            color = 'blue'
-
-            # actually turns on/off the specified note, this is on GUI side only, will need a function for hardware
-            size = width * 0.75, height * 0.25
-
-            placeNote(window.keyboard, noteNum, color, on_off, size)
-            # increment data to next index
-            i = i + 1
-
-            # make sure that each time we loop, the GUI is responsive, with a checkUpdate
+        noteObject = data[i]
+        if noteObject.batch > prevBatch:
+            timeStart = time.time()
+            prevBatch = noteObject.batch
+            window.sheetMusic.shiftNoteData()
+            window.sheetMusic.drawNotes()
+            keyOn(window, notesinPlay)
             window.updateWindow()
+            wait(window, sleepTime)
+            allOff(window, notesinPlay)
 
-        # still need to make sure GUI is responsive, may be able to eliminate
+        flag.clear()
+
+        noteNumber = noteObject.noteNum
+        noteTranslation = note[noteNumber][2]
+        window.sheetMusic.createNoteData(noteTranslation, pos, noteObject.note, 'black')
+
+        i = i + 1
+
+        # make sure that each time we loop, the GUI is responsive, with a checkUpdate
         window.updateWindow()
 
 

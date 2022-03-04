@@ -1,20 +1,30 @@
 import csv
 
+noteLookup = dict()
+noteLookup[244] = "Quarter"
+noteLookup[487] = "Half"
+
 
 class Event:
     def __init__(self, onOff, noteNum, tickTime):
         self.onOff = onOff
         self.noteNum = noteNum
-        self.tickTime = tickTime
+        self.onTime = tickTime
+        self.offTime = 0
         self.foundOff = False
+        self.timeOn = 0
+        self.note = ""
+        self.batch = 0
 
     def __str__(self):
         print(f"Note: {self.noteNum} \t On/Off: {self.onOff} \t TickTime: {self.tickTime}")
+
 
 class Song:
     def __init__(self, songName):
         self.songName = songName
         self.data = []
+        self.cleanData = []
 
         data = []
         with open(self.songName, newline='') as csvfile:
@@ -34,6 +44,27 @@ class Song:
         self.ticksPerSec = ticks_per_sec
 
         self.convertData()
+        self.combineEvents()
+        self.clean()
+        print("")
+
+
+    def clean(self):
+        for events in self.data:
+            if events.onOff == 1:
+                self.cleanData.append(events)
+
+        prev = 0
+        batch = 0
+        for events in self.cleanData:
+            events.timeOn = int(events.offTime)-int(events.onTime)
+            events.note = noteLookup[events.timeOn]
+            events.batch = batch
+
+            if int(events.onTime) > int(prev):
+                prev = events.onTime
+                batch = batch + 1
+                events.batch = batch
 
     def convertData(self):
         for entries in self.rawData:
@@ -51,11 +82,14 @@ class Song:
         for index, events in enumerate(self.data):
             if events.onOff == 1 and events.foundOff is False:
                 # Find off point
+                nextIndex = index
                 while True:
-                    nextIndex = index+1
+                    nextIndex = nextIndex + 1
                     nextNote = self.data[nextIndex]
                     if nextNote.noteNum == events.noteNum:
-
+                        events.foundOff = True
+                        events.offTime = nextNote.onTime
+                        break
 
 
 def iterateSong(data, row):
@@ -65,4 +99,3 @@ def iterateSong(data, row):
     if data[row][' Header'] == " Note_off_c":
         on_off = 0
     return on_off, noteNum
-

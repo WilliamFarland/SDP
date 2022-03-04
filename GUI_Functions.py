@@ -62,7 +62,7 @@ note[55] = 's', 32, ''
 note[56] = 'r', 33, 'g5'
 note[57] = 's', 33, ''
 note[58] = 'r', 34, 'a6'
-note[59] = 's', 34
+note[59] = 's', 34, ''
 note[60] = 'r', 35, 'b6'
 note[61] = 'r', 36, 'c6'
 
@@ -88,6 +88,7 @@ def placeNote(w, noteNum, color, on_off, size):
         coords = note[noteNum][1] * shift -35, 170, note[noteNum][1] * shift + 30 - 35, 205
 
     w.create_rectangle(coords, outline=color, fill=color)
+    w.update()
 
 
 def tempConvert(slider):

@@ -35,10 +35,11 @@ noteHeight['a6'] = 15
 
 
 class NoteVariable:
-    def __init__(self, name, noteType, pos):
+    def __init__(self, name, noteType, pos, color='black'):
         self.name = name
         self.noteType = noteType
         self.pos = pos
+        self.color = color
 
 
 class SheetMusicGraphics:
@@ -65,30 +66,30 @@ class SheetMusicGraphics:
         pos = note.pos
         x = self.midCord[pos - 1]
         if note.name == "c4":
-            self.innerCanvas.create_line(x - 20, 185, x + 40, 185, width=3, tag='notes')
+            self.innerCanvas.create_line(x - 20, 185, x + 40, 185, width=3, tag='notes', fill=note.color)
         if note.name == "a6":
-            self.innerCanvas.create_line(x - 20, 25, x + 40, 25, width=3, tag='notes')
+            self.innerCanvas.create_line(x - 20, 25, x + 40, 25, width=3, tag='notes', fill=note.color)
         if noteType == "Quarter":
-            self.drawQuarterNote(pos, y)
+            self.drawQuarterNote(pos, y, note.color)
         if noteType == "Half":
-            self.drawHalfNote(pos, y)
+            self.drawHalfNote(pos, y, note.color)
         if noteType == "Eighth":
-            self.drawEighthNote(pos, y)
+            self.drawEighthNote(pos, y, note.color)
         if noteType == "Whole":
-            self.drawWholeNote(pos, y)
+            self.drawWholeNote(pos, y, note.color)
 
     def drawNotes(self):
         for notes in self.noteList:
-            if notes.pos < 10:
+            if 10 > notes.pos > 0:
                 self.drawNote(notes)
 
     def shiftNoteData(self):
         for notes in self.noteList:
-            notes.pos = notes.pos + 1
+            notes.pos = notes.pos -1
         self.deleteNotes()
 
-    def createNoteData(self, note, pos, noteType):
-        newNote = NoteVariable(note, noteType, pos)
+    def createNoteData(self, note, pos, noteType, color):
+        newNote = NoteVariable(note, noteType, pos, color)
         self.noteList.append(newNote)
 
     def drawBorders(self):
@@ -105,25 +106,25 @@ class SheetMusicGraphics:
 
         self.innerCanvas.create_rectangle(self.rectLeftCord[4], 0, self.rectRightCord[4], 480, fill='')
 
-    def drawQuarterNote(self, pos, y):
+    def drawQuarterNote(self, pos, y, color):
         x = self.midCord[pos-1]
-        oval = self.innerCanvas.create_oval(x, y, x + 22, y + 20, fill='black', tags='notes')
-        line = self.innerCanvas.create_line(x + 20, y + 10, x + 20, y - 30, width=2.5, tags='notes')
+        oval = self.innerCanvas.create_oval(x, y, x + 22, y + 20, fill=color, tags='notes')
+        line = self.innerCanvas.create_line(x + 20, y + 10, x + 20, y - 30, width=2.5, tags='notes', fill=color)
 
-    def drawHalfNote(self, pos, y):
+    def drawHalfNote(self, pos, y, color):
         x = self.midCord[pos - 1]
-        oval = self.innerCanvas.create_oval(x, y, x + 22, y + 20, fill='', width=2.5 ,tags='notes')
-        line = self.innerCanvas.create_line(x + 20, y + 10, x + 20, y - 30, width=2.5, tags='notes')
+        oval = self.innerCanvas.create_oval(x, y, x + 22, y + 20, outline=color, width=2.5 ,tags='notes')
+        line = self.innerCanvas.create_line(x + 20, y + 10, x + 20,  y - 30, fill=color, width=2.5, tags='notes')
 
-    def drawEighthNote(self, pos, y):
+    def drawEighthNote(self, pos, y, color):
         x = self.midCord[pos - 1]
-        oval = self.innerCanvas.create_oval(x, y, x + 22, y + 20, fill='black', width=2.5, tags='notes')
-        line = self.innerCanvas.create_line(x + 20, y + 10, x + 20, y - 30, width=2.5, tags='notes')
-        line = self.innerCanvas.create_line(x + 20, y - 30, x + 34, y - 12, width=2.5,tags='notes')
+        oval = self.innerCanvas.create_oval(x, y, x + 22, y + 20, outline=color, width=2.5, tags='notes')
+        line = self.innerCanvas.create_line(x + 20, y + 10, x + 20, y - 30, fill=color, width=2.5, tags='notes')
+        line = self.innerCanvas.create_line(x + 20, y - 30, x + 34, y - 12, fill=color, width=2.5,tags='notes')
 
-    def drawWholeNote(self, pos, y):
+    def drawWholeNote(self, pos, y, color):
         x = self.midCord[pos - 1]
-        oval = self.innerCanvas.create_oval(x-7, y-2, x + 30, y + 22, fill='', width=4.5, tags='notes')
+        oval = self.innerCanvas.create_oval(x-7, y-2, x + 30, y + 22, fill=color, width=4.5, tags='notes')
 
     def deleteNotes(self):
         self.innerCanvas.delete("notes")
