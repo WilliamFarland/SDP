@@ -68,13 +68,11 @@ def main():
         window.updateWindow()
     window.outputDialog("Playing...")
 
-    i = 0
     prevBatch = 1
     while tstart < tend:
         ticker = time.time() - tstart
         checkPause(window)
         for notes in data:
-
             if ticker >= notes.shiftOn and notes.turnedOn is False:
                 # turn on note
                 notes.turnedOn = True
@@ -86,10 +84,6 @@ def main():
             if ticker >= notes.shiftOff and notes.turnedOff is False:
                 notes.turnedOff = True
                 placeNote(window.keyboard, notes.noteNum, notes.color, 0, size)
-
-        time.sleep(0.01)
-        window.updateWindow()
-        i = i + 1
         # make sure that each time we loop, the GUI is responsive, with a checkUpdate
         window.updateWindow()
 

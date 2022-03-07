@@ -26,7 +26,7 @@ def convertColor(noteList):
             if notes.finger == 3:
                 notes.color = 'magenta'
             if notes.finger == 4:
-                notes.color = 'violet red'
+                notes.color = 'black'
             if notes.finger == 5:
                 notes.color = 'goldenrod'
 
@@ -62,18 +62,18 @@ def fingerPlacement(noteList):
         leftHand = dict()
         rightHand = dict()
         leftHand[1] = 32
-        leftHand[2] = 34
-        leftHand[3] = 35
-        leftHand[4] = 36
-        leftHand[5] = 38
-        rightHand[1] = 34
-        rightHand[2] = 36
-        rightHand[3] = 38
-        rightHand[4] = 39
-        rightHand[5] = 41
+        leftHand[2] = 30
+        leftHand[3] = 29
+        leftHand[4] = 27
+        leftHand[5] = 25
+        rightHand[1] = 37
+        rightHand[2] = 39
+        rightHand[3] = 41
+        rightHand[4] = 42
+        rightHand[5] = 44
 
         for vals in keyNumber:
-            if vals >= 33:
+            if vals >= 34:
                 right.append(vals)
             else:
                 left.append(vals)
@@ -123,29 +123,31 @@ def fingerPlacement(noteList):
         leftHandTaken[5] = 0
         for keys in keyNumber:
             minDistance = 100
-            finger = 0
             if keys >= meanRight:
                 # assign to right hand
                 for fingers in rightHand:
-                    if abs(rightHand[fingers] - keys) <= minDistance and rightHandTaken[fingers] == 0:
-                        rightHandTaken[fingers] = 1
+                    if rightHandTaken[fingers] == 1:
+                        continue
+                    if abs(rightHand[fingers] - keys) <= minDistance:
+
                         minDistance = abs(rightHand[fingers] - keys)
                         for notes in batchedNotes[batches]:
                             if notes.noteNum == keys:
                                 notes.finger = fingers
                                 notes.hand = 'right'
-
+                rightHandTaken[fingers] = 1
             else:
                 # assign to left hand
                 for fingers in leftHand:
-                    if abs(leftHand[fingers] - keys) <= minDistance and leftHandTaken[fingers] == 0:
-                        leftHandTaken[fingers] = 1
+                    if leftHandTaken[fingers] == 1:
+                        continue
+                    if abs(leftHand[fingers] - keys) <= minDistance:
                         minDistance = rightHand[fingers]
                         for notes in batchedNotes[batches]:
                             if notes.noteNum == keys:
                                 notes.finger = fingers
                                 notes.hand = 'left'
-
+                leftHandTaken[fingers] = 1
 
         keyNumber.clear()
         leftHand.clear()
