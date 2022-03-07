@@ -179,7 +179,7 @@ class Event:
 
 
     def __str__(self):
-        print(f"Note: {self.noteNum} \t On/Off: {self.onOff} \t TickTime: {self.tickTime}")
+        print("Note: {self.noteNum} \t On/Off: {self.onOff} \t TickTime: {self.tickTime}")
 
 
 class Song:
