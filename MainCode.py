@@ -51,23 +51,22 @@ def main():
     fingerPlacement(data)
     convertColor(data)
     timer = 5  # count down
-   # window.sheetMusic.shiftNoteData()
-    goalBatch = 0
-    for i in range(timer):
-        window.outputDialog(f"Song Starting in {timer-i} seconds")
-
-
-
-    window.outputDialog("Playing...")
-
     tempo_modifier = 1  # a variable that can be adjusted to speed/slow a song
     tend = 10000000000000000000000 + time.time()
-    tstart = time.time()  # calculates the start time
+    tstart = time.time()   # calculates the start time
     # This is the main logic loop of the program its setup to loop until the end of the song has been reached
     # this is relative to the timing specified in tics of the MIDI file
 
-    for notes in window.sheetMusic.noteList:
-        notes.pos = notes.pos + 1
+    for notes in data:
+        window.sheetMusic.createNoteData(note[notes.noteNum][2], notes.batch+9, notes.note, notes.color)
+
+    for i in range(timer):
+        window.outputDialog("Song Starting in " + str(timer - i) + " seconds")
+        time.sleep(1)
+        window.sheetMusic.shiftNoteData()
+        window.sheetMusic.drawNotes()
+        window.updateWindow()
+    window.outputDialog("Playing...")
 
     i = 0
     prevBatch = 1
@@ -75,23 +74,17 @@ def main():
         ticker = time.time() - tstart
         checkPause(window)
         for notes in data:
-            if ticker >= notes.absoluteOn and notes.turnedOn is False:
+
+            if ticker >= notes.shiftOn and notes.turnedOn is False:
                 # turn on note
                 notes.turnedOn = True
+                placeNote(window.keyboard, notes.noteNum, notes.color, 1, size)
                 if notes.batch > prevBatch:
                     window.sheetMusic.shiftNoteData()
                     window.sheetMusic.drawNotes()
                     prevBatch = notes.batch
-                window.sheetMusic.createNoteData(note[notes.noteNum][2], 10, notes.note, notes.color)
-            if ticker >= notes.absoluteOff and notes.turnedOff is False:
+            if ticker >= notes.shiftOff and notes.turnedOff is False:
                 notes.turnedOff = True
-                #placeNote(window.keyboard, notes.noteNum, 'black', 0, size)
-
-            if ticker >= notes.shiftOn and notes.shiftOnprev is False:
-                notes.shiftOnprev = True
-                placeNote(window.keyboard, notes.noteNum, notes.color, 1, size)
-            if ticker >= notes.shiftOff and notes.shiftOffprev is False:
-                notes.shiftOffprev = True
                 placeNote(window.keyboard, notes.noteNum, notes.color, 0, size)
 
         time.sleep(0.01)

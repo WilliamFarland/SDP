@@ -54,6 +54,7 @@ def fingerPlacement(noteList):
     for batches in range(currentBatch):
         for notes in batchedNotes[batches]:
             keyNumber.append(notes.noteNum)
+        keyNumber.sort()
 
         # following chopin's natural finger placement
         left = []
@@ -127,22 +128,24 @@ def fingerPlacement(noteList):
                 # assign to right hand
                 for fingers in rightHand:
                     if abs(rightHand[fingers] - keys) <= minDistance and rightHandTaken[fingers] == 0:
+                        rightHandTaken[fingers] = 1
                         minDistance = abs(rightHand[fingers] - keys)
                         for notes in batchedNotes[batches]:
                             if notes.noteNum == keys:
                                 notes.finger = fingers
                                 notes.hand = 'right'
-                                rightHandTaken[fingers] = 1
+
             else:
                 # assign to left hand
                 for fingers in leftHand:
-                    if abs(leftHand[fingers] - keys) <= minDistance:
+                    if abs(leftHand[fingers] - keys) <= minDistance and leftHandTaken[fingers] == 0:
+                        leftHandTaken[fingers] = 1
                         minDistance = rightHand[fingers]
                         for notes in batchedNotes[batches]:
                             if notes.noteNum == keys:
                                 notes.finger = fingers
                                 notes.hand = 'left'
-                                leftHandTaken[fingers] = 1
+
 
         keyNumber.clear()
         leftHand.clear()
@@ -211,13 +214,11 @@ class Song:
 
     def calculateDelay(self):
         currMax = 0
+        shift = 8.2
         for events in self.cleanData:
-            batch = events.batch
-            for events2 in self.cleanData:
-                if events2.batch == batch + 5:
-                    events.shiftOn = events2.absoluteOn
-                    events.shiftOff = (events.absoluteOff-events.absoluteOn) + events.shiftOn
-                    break
+            events.shiftOn = events.absoluteOn + shift
+            events.shiftOff = events.absoluteOff-events.absoluteOn + events.shiftOn
+
 
     def generateTimeline(self):
         for events in self.cleanData:
@@ -228,7 +229,6 @@ class Song:
 
             events.absoluteOn = events.onTime / 162
             events.absoluteOff = (events.onTime / 162) + events.playTime
-
 
     def clean(self):
         for events in self.data:
