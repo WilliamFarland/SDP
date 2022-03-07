@@ -85,7 +85,7 @@ def placeNote(w, noteNum, color, on_off, size):
     if note[noteNum][0] == 's':  # regular note place below sharp notes
         coords = note[noteNum][1] * shift-10, 125, note[noteNum][1] * shift + 10, 150
     if note[noteNum][0] == 'r':  # sharp note place above regular notes
-        coords = note[noteNum][1] * shift -35, 170, note[noteNum][1] * shift + 30 - 35, 205
+        coords = note[noteNum][1] * shift -35, 185, note[noteNum][1] * shift + 30 - 35, 215
 
     w.create_rectangle(coords, outline=color, fill=color)
     w.update()

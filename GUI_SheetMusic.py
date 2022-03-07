@@ -58,7 +58,6 @@ class SheetMusicGraphics:
         self.root = root
         self.drawBorders()
         self.noteList = []
-        print(self.noteList)
 
     def drawNote(self, note):
         y = noteHeight[note.name]
