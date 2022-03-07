@@ -9,6 +9,43 @@ size = width * 0.8, height * 0.45
 timeQuarter = 1.25
 # Sleep Half Note
 timeHalf = 2.5
+beaglePluggedin = 0
+
+if beaglePluggedin == 1:
+    try:
+        import strip
+    except:
+        print("you didnt build alex's library correctly")
+
+def initializeHardware():
+    strip.makeStrip(105)
+    strip.beginStrip()
+    strip.clear()
+    strip.show()
+
+
+def hardwareOn(keyNum, color):
+    if color == 'blue':
+        r = 0
+        g = 0
+        b = 255
+    elif color == 'green':
+        r = 0
+        g = 255
+        b = 0
+    elif color == 'red':
+        r = 255
+        g = 0
+        b = 0
+    elif color == 'off':
+        r = 0
+        g = 0
+        b = 0
+    else:
+        r = 255
+        g = 255
+        b = 255
+    strip.setPixel([keyNum, r, g, b])
 
 
 def checkPause(window):
@@ -25,7 +62,8 @@ def main():
     # Create Window Object
     # Window Object is main application GUI
     window = mainWindow("Window")
-
+    if beaglePluggedin == 1:
+        initializeHardware()
     # An initial loop to pause program until a song is selected and the play button is pressed
     # Let the user know why we are waiting.... using the outputDialog function
     window.outputDialog("Please choose a song to begin the program")
@@ -77,6 +115,9 @@ def main():
                 # turn on note
                 notes.turnedOn = True
                 placeNote(window.keyboard, notes.noteNum, notes.color, 1, size)
+                if beaglePluggedin == 1:
+                    hardwareOn(notes.noteNum, notes.color)
+                    strip.show()
                 if notes.batch > prevBatch:
                     window.sheetMusic.shiftNoteData()
                     window.sheetMusic.drawNotes()
@@ -84,6 +125,9 @@ def main():
             if ticker >= notes.shiftOff and notes.turnedOff is False:
                 notes.turnedOff = True
                 placeNote(window.keyboard, notes.noteNum, notes.color, 0, size)
+                if beaglePluggedin == 1:
+                    hardwareOn(notes.noteNum, 'off')
+                    strip.show()
         # make sure that each time we loop, the GUI is responsive, with a checkUpdate
         window.updateWindow()
 
