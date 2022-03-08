@@ -12,13 +12,13 @@ size = width * 0.8, height * 0.45
 timeQuarter = 1.25
 # Sleep Half Note
 timeHalf = 2.5
-beaglePluggedin = 1
+beaglePluggedin = 0
 
 
 if beaglePluggedin == 1:
     try:
         import strip
-       	# exec(open("MIDI.py").read())
+        # exec(open("MIDI.py").read())
     except:
         print("you didnt build alex's library correctly")
 
@@ -70,6 +70,7 @@ def clearOutput():
         os.remove("Output.csv")
     except:
         print("No need to remove Output as it dosent exsist...")
+
 
 
 def main():
@@ -139,6 +140,21 @@ def main():
                     prevBatch = notes.batch
             if ticker >= notes.shiftOff and notes.turnedOff is False:
                 notes.turnedOff = True
+                try:
+                    f = open("Output.csv")
+                    lines = f.readlines()
+                    for line in lines:
+                        line = line.split(',')
+                        timeFromFile = line[1]
+                        onOff = line[2]
+                        noteNum = line[3]
+                        if noteNum == notes.noteNum and abs(float(timeFromFile) - float(notes.shiftOff)) < 1.5 and onOff == 'Off':
+                            notes.color == 'green'
+                        else:
+                            notes.color == 'red'
+
+                except FileNotFoundError:
+                    print("Output does not exist")
                 placeNote(window.keyboard, notes.noteNum, notes.color, 0, size)
                 if beaglePluggedin == 1:
                     hardwareOn(notes.noteNum, 'off')
