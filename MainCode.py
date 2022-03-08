@@ -1,7 +1,9 @@
+
 from GUI_Application import *
 from MUSIC_Logic import *
 import time
 import csv
+import os
 
 control = False
 imagePath = 'images/'
@@ -12,12 +14,14 @@ timeQuarter = 1.25
 timeHalf = 2.5
 beaglePluggedin = 1
 
+
 if beaglePluggedin == 1:
     try:
         import strip
-        exec(open("MIDI.py").read())
+       	# exec(open("MIDI.py").read())
     except:
         print("you didnt build alex's library correctly")
+
 
 
 def initializeHardware():
@@ -62,10 +66,10 @@ def checkPause(window):
 
 
 def clearOutput():
-    f = open('Output.csv', 'w')
-    #writer = csv.writer(f)
-    #writer.writerow("")
-    f.close()
+    try:
+        os.remove("Output.csv")
+    except:
+        print("No need to remove Output as it dosent exsist...")
 
 
 def main():
