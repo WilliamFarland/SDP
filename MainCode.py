@@ -12,7 +12,7 @@ size = width * 0.8, height * 0.45
 timeQuarter = 1.25
 # Sleep Half Note
 timeHalf = 2.5
-beaglePluggedin = 0
+beaglePluggedin = 1
 
 
 if beaglePluggedin == 1:
@@ -57,13 +57,15 @@ def hardwareOn(keyNum, color):
 
 def checkPause(window):
     playPause = window.dropMenu_2.path
-    window.outputDialog("Playing...")
-
+   # window.outputDialog("Playing...")
+    timePaused = time.time()
     while playPause is False:
         playPause = window.dropMenu_2.path
         window.outputDialog("Paused...")
         window.updateWindow()
 
+    timePaused = time.time() - timePaused
+    return timePaused
 
 def clearOutput():
     try:
@@ -74,7 +76,7 @@ def clearOutput():
 
 
 def main():
-    clearOutput()
+    #clearOutput()
     # Create Window Object
     # Window Object is main application GUI
     window = mainWindow("Window")
@@ -104,6 +106,7 @@ def main():
     data = SongObject.cleanData
     fingerPlacement(data)
     convertColor(data)
+    mistakes = 0
     timer = 5  # count down
     tempo_modifier = 1  # a variable that can be adjusted to speed/slow a song
     tend = 10000000000000000000000 + time.time()
@@ -120,12 +123,14 @@ def main():
         window.sheetMusic.shiftNoteData()
         window.sheetMusic.drawNotes()
         window.updateWindow()
-    window.outputDialog("Playing...")
 
     prevBatch = 1
     while tstart < tend:
+        window.outputDialog("Playing... Mistake Count: "+str(mistakes))
+
         ticker = time.time() - tstart
-        checkPause(window)
+        timePaused = checkPause(window)
+        ticker = ticker + timePaused
         for notes in data:
             if ticker >= notes.shiftOn and notes.turnedOn is False:
                 # turn on note
@@ -150,11 +155,12 @@ def main():
                         noteNum = line[3]
                         if noteNum == notes.noteNum and abs(float(timeFromFile) - float(notes.shiftOff)) < 1.5 and onOff == 'Off':
                             notes.color == 'green'
-                        else:
-                            notes.color == 'red'
 
                 except FileNotFoundError:
                     print("Output does not exist")
+                if notes.color != 'green':
+                    mistakes = mistakes + 1
+
                 placeNote(window.keyboard, notes.noteNum, notes.color, 0, size)
                 if beaglePluggedin == 1:
                     hardwareOn(notes.noteNum, 'off')

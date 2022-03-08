@@ -111,7 +111,8 @@ while True:
         print("Time: ", time.time(), "Note On:", keyname)
         f = open('Output.csv', 'a')
         writer = csv.writer(f)
-        row = ['On', str(keyname)]
+        row = ['Time', time.time(),'On', str(keyname)]
+
         writer.writerow(row)
         f.close()
     # Test if Keyboard sent a midi signal of 128 (0b10000000)
@@ -124,7 +125,8 @@ while True:
         print("Time: ", time.time(), "Note Off:", keyname)
         f = open('Output.csv', 'a')
         writer = csv.writer(f)
-        row = ['Off', str(keyname)]
+        row = ['Time', time.time(),'On', str(keyname)]
+
         writer.writerow(row)
         f.close()
 
