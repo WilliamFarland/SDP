@@ -1,6 +1,7 @@
 from GUI_Application import *
 from MUSIC_Logic import *
 import time
+import csv
 
 control = False
 imagePath = 'images/'
@@ -14,28 +15,29 @@ beaglePluggedin = 1
 if beaglePluggedin == 1:
     try:
         import strip
+        exec(open("MIDI.py").read())
     except:
         print("you didnt build alex's library correctly")
 
+
 def initializeHardware():
-    strip.makeStrip(108)
+    strip.makeStrip(105)
     strip.beginStrip()
     strip.clear()
     strip.show()
 
 
 def hardwareOn(keyNum, color):
-    keyNum = note[keyNum][1] -1
     if color == 'blue':
         r = 0
         g = 0
-        b = 150
+        b = 255
     elif color == 'green':
         r = 0
-        g = 150
+        g = 255
         b = 0
     elif color == 'red':
-        r = 150
+        r = 255
         g = 0
         b = 0
     elif color == 'off':
@@ -43,12 +45,10 @@ def hardwareOn(keyNum, color):
         g = 0
         b = 0
     else:
-        r = 150
-        g = 150
-        b = 150
-    strip.setPixel([keyNum*3, r, g, b])
-    strip.setPixel([keyNum*3+1, r, g, b])
-    strip.setPixel([keyNum*3+2, r, g, b])
+        r = 255
+        g = 255
+        b = 255
+    strip.setPixel([keyNum, r, g, b])
 
 
 def checkPause(window):
@@ -61,7 +61,15 @@ def checkPause(window):
         window.updateWindow()
 
 
+def clearOutput():
+    f = open('Output.csv', 'w')
+    #writer = csv.writer(f)
+    #writer.writerow("")
+    f.close()
+
+
 def main():
+    clearOutput()
     # Create Window Object
     # Window Object is main application GUI
     window = mainWindow("Window")
