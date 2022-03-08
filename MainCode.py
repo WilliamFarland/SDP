@@ -9,7 +9,7 @@ size = width * 0.8, height * 0.45
 timeQuarter = 1.25
 # Sleep Half Note
 timeHalf = 2.5
-beaglePluggedin = 0
+beaglePluggedin = 1
 
 if beaglePluggedin == 1:
     try:
@@ -18,23 +18,24 @@ if beaglePluggedin == 1:
         print("you didnt build alex's library correctly")
 
 def initializeHardware():
-    strip.makeStrip(105)
+    strip.makeStrip(108)
     strip.beginStrip()
     strip.clear()
     strip.show()
 
 
 def hardwareOn(keyNum, color):
+    keyNum = note[keyNum][1] -1
     if color == 'blue':
         r = 0
         g = 0
-        b = 255
+        b = 150
     elif color == 'green':
         r = 0
-        g = 255
+        g = 150
         b = 0
     elif color == 'red':
-        r = 255
+        r = 150
         g = 0
         b = 0
     elif color == 'off':
@@ -42,10 +43,12 @@ def hardwareOn(keyNum, color):
         g = 0
         b = 0
     else:
-        r = 255
-        g = 255
-        b = 255
-    strip.setPixel([keyNum, r, g, b])
+        r = 150
+        g = 150
+        b = 150
+    strip.setPixel([keyNum*3, r, g, b])
+    strip.setPixel([keyNum*3+1, r, g, b])
+    strip.setPixel([keyNum*3+2, r, g, b])
 
 
 def checkPause(window):
