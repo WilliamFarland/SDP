@@ -2,6 +2,7 @@
 import Adafruit_BBIO.UART as UART
 import serial
 import csv
+import time
 
 UART.setup("UART1")  # Setup UART1, P9_24 (TX) and P9_26 (RX)
 
@@ -107,10 +108,11 @@ while True:
         # Get the musical keyname for that key
         keyname = noteDict.data[key].note_name
         # Print the key to terminal
-        print("Note On:", keyname)
+        print("Time: ", time.time(), "Note On:", keyname)
         f = open('Output.csv', 'a')
         writer = csv.writer(f)
-        writer.writerow("On," + str(keyname))
+        row = ['On', str(keyname)]
+        writer.writerow(row)
         f.close()
     # Test if Keyboard sent a midi signal of 128 (0b10000000)
     if command == 128:
@@ -119,8 +121,10 @@ while True:
         # Get the musical keyname for that key
         keyname = noteDict.data[key].note_name
         # Print the key to terminal
+        print("Time: ", time.time(), "Note Off:", keyname)
         f = open('Output.csv', 'a')
         writer = csv.writer(f)
-        writer.writerow("Off," + str(keyname))
+        row = ['Off', str(keyname)]
+        writer.writerow(row)
         f.close()
 
