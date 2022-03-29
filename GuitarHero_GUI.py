@@ -1,3 +1,6 @@
+# GUI for the 2nd mode of project
+# 3/29/22
+
 from GUI_Functions import *
 from GUI_SheetMusic import SheetMusicGraphics
 import tkinter
@@ -5,9 +8,6 @@ from tkinter import *
 from tkinter import font, filedialog
 from PIL import ImageTk, Image
 import sys
-import os
-
-
 
 control = False
 imagePath = 'images/'
@@ -21,32 +21,6 @@ root.geometry("1536x864")
 
 myFont = font.Font(family='San Francisco', size=10, weight='bold')
 myFont_large = font.Font(family='San Francisco', size=15, weight='bold')
-
-
-def restartProgram():
-    os.execl(sys.executable, sys.executable, *sys.argv)
-
-
-class initialDropMenu:
-    def __init__(self, w, name, label, menuOptions):
-        self.name = name
-        self.path = False
-        self.menuOptions = menuOptions
-        self.clicked = StringVar()
-        self.clicked.set("Mode Selection")
-
-        self.dropMenuObject = OptionMenu(w, self.clicked, *self.menuOptions)
-        self.dropMenuLabel = tkinter.Label(text=label, font=myFont_large)
-
-    def checkMode(self):
-        flag = self.clicked.get()
-        if flag == "Default":
-            self.path = True
-            return 1
-        if flag == "Guitar Hero":
-            self.path = True
-            return 2
-        return 0
 
 
 class DropMenu:
@@ -111,10 +85,6 @@ class mainWindow:
         self.current_tempo=tkinter.DoubleVar
         self.slider = tkinter.Scale(root, from_=1, to=10, orient='horizontal', variable=self.current_tempo)
 
-        self.restartButton = Button(root, text='\u21BA', command = restartProgram)
-        restartButtonLabel = Label(root, text="Restart", font=myFont_large)
-        restartButtonLabel.grid(row=1, column=5)
-
         self.configureKeyboard()
         self.configureDialog()
         self.configureLogo()
@@ -160,7 +130,7 @@ class mainWindow:
         instrHeader = tkinter.Label(self.dialog, text="Console: ", font=myFont_large)
         instrHeader.grid(row=0, column=0)
         # Create an initial start instruction before a song is selected
-        instr = tkinter.Label(self.dialog, text=instruction, font=myFont)
+        instr = tkinter.Label(self.dialog, text=instruction, font=myFont_large)
         instr.grid(row=1, column=0)
 
     def clearDialog(self):
@@ -182,59 +152,7 @@ class mainWindow:
     def showValues(self):
         self.keyboard.delete("showhide")
 
-        self.sheetMusic.innerCanvas.create_rectangle(54, 20, 87, 450, fill='white', outline='', tag='showhidekeyboard')
-        self.sheetMusic.innerCanvas.create_text(55, 20, anchor=NW, text="A", tag='showhidekeyboard', font=myFont_large)
-        self.sheetMusic.innerCanvas.create_text(70, 30, anchor=NW, text="G", tag='showhidekeyboard', fill='black',
-                                                font=myFont_large)
-        self.sheetMusic.innerCanvas.create_text(55, 40, anchor=NW, text="F", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 55, anchor=NW, text="E", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 70, anchor=NW, text="D", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 83, anchor=NW, text="C", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 98, anchor=NW, text="B", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 110, anchor=NW, text="A", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 125, anchor=NW, text="G", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 139, anchor=NW, text="F", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 155, anchor=NW, text="E", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 164, anchor=NW, text="D", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 174, anchor=NW, text="C", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
 
-        self.sheetMusic.innerCanvas.create_text(55, 290, anchor=NW, text="C", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 300, anchor=NW, text="B", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 308, anchor=NW, text="A", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 320, anchor=NW, text="G", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 335, anchor=NW, text="F", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 348, anchor=NW, text="E", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 365, anchor=NW, text="D", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 377, anchor=NW, text="C", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 392, anchor=NW, text="B", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 405, anchor=NW, text="A", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 422, anchor=NW, text="G", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(70, 430, anchor=NW, text="F", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
-        self.sheetMusic.innerCanvas.create_text(55, 440, anchor=NW, text="E", tag='showhidekeyboard',
-                                                font=myFont_large, fill='black')
 
     def updateWindow(self):
         root.update()
@@ -254,7 +172,7 @@ class mainWindow:
     def placeObjects(self):
         self.mainCanvas.grid(row=10, column=0, columnspan=40, rowspan=50)
         self.mainCanvas.configure(background="white")
-        self.dialog.grid(row=1, column=5, columnspan=25, rowspan=5, padx=10, pady=10)
+        self.dialog.grid(row=1, column=3, columnspan=30, rowspan=5, padx=10, pady=10)
         self.keyboard.place(x=1, y=7)
         self.logo.place(x=1440, y=5)
         # rectangle borders
@@ -276,4 +194,3 @@ class mainWindow:
         sliderLabel.grid(row=1, column=4)
         self.slider.grid(row=2, column=4)
 
-        self.restartButton.grid(row=2, column=5)

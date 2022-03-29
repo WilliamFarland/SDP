@@ -9,26 +9,26 @@ def convertColor(noteList):
     for notes in noteList:
         if notes.hand == 'left':
             if notes.finger == 1:
-                notes.color = 'red'
+                notes.color = 'purple'
             if notes.finger == 2:
-                notes.color = 'orange'
-            if notes.finger == 3:
-                notes.color = 'yellow'
-            if notes.finger == 4:
-                notes.color = 'green'
-            if notes.finger == 5:
                 notes.color = 'blue'
+            if notes.finger == 3:
+                notes.color = 'green'
+            if notes.finger == 4:
+                notes.color = 'yellow'
+            if notes.finger == 5:
+                notes.color = 'red'
         if notes.hand == 'right':
             if notes.finger == 1:
                 notes.color = 'purple'
             if notes.finger == 2:
-                notes.color = 'cyan'
+                notes.color = 'blue'
             if notes.finger == 3:
-                notes.color = 'magenta'
+                notes.color = 'green'
             if notes.finger == 4:
-                notes.color = 'black'
+                notes.color = 'yellow'
             if notes.finger == 5:
-                notes.color = 'goldenrod'
+                notes.color = 'red'
 
 
 def fingerPlacement(noteList):
@@ -220,6 +220,11 @@ class Song:
         for events in self.cleanData:
             events.shiftOn = events.absoluteOn + shift
             events.shiftOff = events.absoluteOff-events.absoluteOn + events.shiftOn
+
+    def adjustTempo(self, tempo):
+        for events in self.cleanData:
+            events.shiftOn = events.shiftOn * (1/tempo)
+            events.shiftOff = events.shiftOff * (1/tempo)
 
 
     def generateTimeline(self):

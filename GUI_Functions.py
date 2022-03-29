@@ -91,22 +91,6 @@ def placeNote(w, noteNum, color, on_off, size):
     w.update()
 
 
-def tempConvert(slider):
-    for i in range(1, slider):
-        tempoMod = tempoMod + (2-0.1)/10
-    return tempoMod
-
-
-def configureButtons(root, myFont):
-    # Pause Button Creation
-    control = False
-    pause_btn = Button(root, text=u'\u23F8', bd='5', command=test, font=myFont)
-    # Play Button Creation
-    play_btn = Button(root, text=u'\u23F5', bd='5', command=lambda: control == controlMethod())
-
-    return pause_btn, play_btn, control
-
-
 
 
 
