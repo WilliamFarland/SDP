@@ -35,11 +35,12 @@ noteHeight['a6'] = 15
 
 
 class NoteVariable:
-    def __init__(self, name, noteType, pos, color='black'):
+    def __init__(self, name, noteType, pos, color, noteNum):
         self.name = name
         self.noteType = noteType
         self.pos = pos
         self.color = color
+        self.noteNum = noteNum
 
 
 class SheetMusicGraphics:
@@ -87,9 +88,15 @@ class SheetMusicGraphics:
             notes.pos = notes.pos -1
         self.deleteNotes()
 
-    def createNoteData(self, note, pos, noteType, color):
-        newNote = NoteVariable(note, noteType, pos, color)
+    def createNoteData(self, note, pos, noteType, color, noteNum):
+        newNote = NoteVariable(note, noteType, pos, color, noteNum)
         self.noteList.append(newNote)
+
+    def deleteNoteData(self, pos, noteNum):
+        for index, notes in enumerate(self.noteList):
+            if notes.pos == pos and notes.noteNum == noteNum:
+                 del self.noteList[index]
+
 
     def drawBorders(self):
         left = 50
