@@ -1,97 +1,44 @@
-from GUI_Functions import *
-from GUI_SheetMusic import SheetMusicGraphics
-import tkinter
-from tkinter import *
-from tkinter import font, filedialog
-from PIL import ImageTk, Image
-import sys
-import os
+from guiDependencies_GUI import *
+from sheetMusic_GUI import *
+
+import csv
 
 
+def checkError(correctNote):
+    value = False
+    f = open('Output.csv', 'r')
+    rowList = []
+    reader = csv.reader(f, delimiter=",")
+    for rows in reader:
+        if abs(float(rows[1]) - time.time()) < 5:
+            rowList.append(rows)
+    f.close()
 
-control = False
-imagePath = 'images/'
+    for notes in rowList:
+        if notes[3] == correctNote:
+            value = True
+        else:
+            value = False
 
-width = 1920
-height = 1080
-
-root = Tk()  # Create initial root widget
-root.title('SDP - Team 22')  # Name root widget
-root.geometry("1536x864")
-
-myFont = font.Font(family='San Francisco', size=10, weight='bold')
-myFont_large = font.Font(family='San Francisco', size=15, weight='bold')
-
-
-def restartProgram():
-    os.execl(sys.executable, sys.executable, *sys.argv)
-
-
-class initialDropMenu:
-    def __init__(self, w, name, label, menuOptions):
-        self.name = name
-        self.path = False
-        self.menuOptions = menuOptions
-        self.clicked = StringVar()
-        self.clicked.set("Mode Selection")
-
-        self.dropMenuObject = OptionMenu(w, self.clicked, *self.menuOptions)
-        self.dropMenuLabel = tkinter.Label(text=label, font=myFont_large)
-
-    def checkMode(self):
-        flag = self.clicked.get()
-        if flag == "Default":
-            self.path = True
-            return 1
-        if flag == "Guitar Hero":
-            self.path = True
-            return 2
-        return 0
+    return value
 
 
-class DropMenu:
-    def __init__(self, name, label, menuOptions):
-        self.name = name
-        self.path = False
-        self.show = True
-        self.prevShow = True
-        self.menuOptions = menuOptions
-        self.clicked = StringVar()
-        if self.name == "Menu 1":
-            self.clicked.set("File")
-        if self.name == "Menu 2":
-            self.clicked.set("Play/Pause")
-        if self.name == "Menu 3":
-            self.clicked.set("Show/Hide")
-        if self.name == "Menu 10":
-            self.clicked.set("Mode Selection")
-        # self.clicked.set("File")
-        self.dropMenuObject = OptionMenu(root, self.clicked, *self.menuOptions)
-        self.dropMenuLabel = tkinter.Label(text=label, font=myFont_large)
-
-    def checkValue(self):
-        flag = self.clicked.get()
-        if flag == "Exit":
-            sys.exit()
-        if flag == "Choose Song File":
-            file_path = filedialog.askopenfilename()
-            self.clicked.set("File")
-            self.path = file_path
-        if flag == "Pause":
-            # self.clicked.set("Play/Pause")
-            self.path = False
-            # print("Pause")
-        if flag == "Play":
-            self.path = True
-            # self.clicked.set("Play/Pause")
-            # print("Play")
-        if flag == "Show":
-            self.show = True
-        if flag == "Hide":
-            self.show = False
+def findBatch(batchNum, noteList):
+    noteinBatch = []
+    for notes in noteList:
+        if notes.batch == batchNum:
+            noteinBatch.append(notes)
+    return noteinBatch
 
 
-class mainWindow:
+def changeColor(noteNum, color, window):
+    for notes in window.sheetMusic.noteList:
+        noteName = note[noteNum.noteNum][2]
+        if notes.pos == 5 and notes.name == noteName:
+            notes.color = color
+
+
+class defaultWindow:
     # GUI Setup Commands
     def __init__(self, name):
         self.name = name
@@ -99,6 +46,7 @@ class mainWindow:
         self.dialog = None
         self.keyboard = None
         self.logo = None
+        self.restartProgramFlag = 0
         self.mainCanvas = Canvas(root, width=width, height=height, highlightthickness=1,
                                  highlightbackground="black")
 
@@ -111,7 +59,7 @@ class mainWindow:
         self.current_tempo=tkinter.DoubleVar
         self.slider = tkinter.Scale(root, from_=1, to=10, orient='horizontal', variable=self.current_tempo)
 
-        self.restartButton = Button(root, text='\u21BA', command = restartProgram)
+        self.restartButton = Button(root, text='\u21BA', command = lambda: restartProgram(self))
         restartButtonLabel = Label(root, text="Restart", font=myFont_large)
         restartButtonLabel.grid(row=1, column=5)
 
@@ -241,6 +189,9 @@ class mainWindow:
         self.dropMenu_1.checkValue()
         self.dropMenu_2.checkValue()
         self.dropMenu_3.checkValue()
+
+        if self.dropMenu_1.checkValue() == "Save":
+            return 'Save'
 
         # insert stupid code here to toggle the on / off instead of wasting on off time every iteration
         # if this isnt here the code does lag

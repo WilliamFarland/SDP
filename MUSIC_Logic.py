@@ -178,6 +178,8 @@ class Event:
         self.color = 'black'
         self.finger = ''
         self.hand = ''
+        self.stopY = 0
+        self.startY = 0
 
 
     def __str__(self):
@@ -246,7 +248,10 @@ class Song:
         batch = 0
         for events in self.cleanData:
             events.timeOn = int(events.offTime)-int(events.onTime)
-            events.note = noteLookup[events.timeOn]
+            try:
+                events.note = noteLookup[events.timeOn]
+            except:
+                events.note = 'Quarter'
             events.batch = batch
 
             if int(events.onTime) > int(prev):
