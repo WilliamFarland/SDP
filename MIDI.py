@@ -94,6 +94,11 @@ noteDict.data[95] = Note("b6", 95)
 noteDict.data[96] = Note("c7", 96)
 
 
+def writeData(time, keyName, keyNum, onOff):
+    f = open('Output.csv', 'a')
+    f.write(str(time) + "," + str(keyName) + "," + str(onOff) + str(keyNum) + ", 0"'\n')
+    f.close()
+
 
 # Basic Script for reading if certain notes are pressed/released
 while True:
@@ -115,21 +120,8 @@ while True:
           print("key error")
           keyname = 'NA'
         # Print the key to terminal
-        print("Time: ", time.time(), "Note On:", keyname)
-        f = open('Output.csv', 'r')
-        rowList=[]
-        reader = csv.reader(f, delimiter=",")
-        for rows in reader:
-          if abs(float(rows[1]) - time.time()) < 7:
-            rowList.append(rows)
-        f.close()
-        row = ['Time', time.time(),'On', str(keyname)]
-        rowList.append(row)
-        f = open('Output.csv', 'w')
-        writer = csv.writer(f)
-        for rows in rowList:
-          writer.writerow(rows)
-        f.close()
+        writeData(time.time(), keyname, key, 1)
+
  
     # Test if Keyboard sent a midi signal of 128 (0b10000000)
     if command == 128:
@@ -143,5 +135,8 @@ while True:
           keyname = 'na'
         # Print the key to terminal
         print("Time: ", time.time(), "Note Off:", keyname)
-      
+        writeData(time.time(), keyname, key, 0)
+
+
+
 

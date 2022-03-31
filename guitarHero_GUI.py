@@ -1,177 +1,28 @@
 # GUI for the 2nd mode of project
 # 3/29/22
-import time
-from GUI_Application import *
-
-conv = dict()
-conv[1] = 0
-conv[2] = 1
-conv[3] = 2
-conv[4] = 3
-conv[5] = 4
-conv[6] = 6
-conv[7] = 7
-conv[8] = 8
-conv[9] = 9
-conv[10] = 10
-conv[11] = 11
-conv[12] = 12
-conv[13] = 14
-conv[14] = 15
-conv[15] = 16
-conv[16] = 17
-conv[17] = 18
-conv[18] = 20
-conv[19] = 21
-conv[20] = 22
-conv[21] = 23
-conv[22] = 24
-conv[23] = 25
-conv[24] = 26
-conv[25] = 28
-conv[26] = 29
-conv[27] = 30
-conv[28] = 31
-conv[29] = 32
-conv[30] = 34
-conv[31] = 35
-conv[32] = 36
-conv[33] = 37
-conv[34] = 38
-conv[35] = 39
-conv[36] = 40
-conv[37] = 42
-conv[38] = 43
-conv[39] = 44
-conv[40] = 45
-conv[41] = 46
-conv[42] = 48
-conv[43] = 49
-conv[44] = 50
-conv[45] = 51
-conv[46] = 52
-conv[47] = 53
-conv[48] = 54
-conv[49] = 56
-conv[50] = 57
-conv[51] = 58
-conv[52] = 59
-conv[53] = 60
-conv[54] = 62
-conv[55] = 63
-conv[56] = 64
-conv[57] = 65
-conv[58] = 66
-conv[59] = 67
-conv[60] = 68
-conv[61] = 70
+from guiDependencies_GUI import *
 
 
-conv2 = dict()
-conv2[1] = 0
-conv2[2] = 1
-conv2[3] = 2
-conv2[4] = 3
-conv2[5] = 4
-conv2[6] = 5
-conv2[7] = 6
-conv2[8] = 7
-conv2[9] = 8
-conv2[10] = 9
-conv2[11] = 10
-conv2[12] = 11
-conv2[13] = 12
-conv2[14] = 13
-conv2[15] = 14
-conv2[16] = 17
-conv2[17] = 18
-conv2[18] = 20
-conv2[19] = 21
-conv2[20] = 22
-conv2[21] = 23
-conv2[22] = 24
-conv2[23] = 25
-conv2[24] = 26
-conv2[25] = 28
-conv2[26] = 29
-conv2[27] = 30
-conv2[28] = 31
-conv2[29] = 32
-conv2[30] = 34
-conv2[31] = 35
-conv2[32] = 36
-conv2[33] = 37
-conv2[34] = 38
-conv2[35] = 39
-conv2[36] = 40
-conv2[37] = 42
-conv2[38] = 43
-conv2[39] = 44
-conv2[40] = 45
-conv2[41] = 46
-conv2[42] = 48
-conv2[43] = 49
-conv2[44] = 50
-conv2[45] = 51
-conv2[46] = 52
-conv2[47] = 53
-conv2[48] = 54
-conv2[49] = 56
-conv2[50] = 57
-conv2[51] = 58
-conv2[52] = 59
-conv2[53] = 60
-conv2[54] = 62
-conv2[55] = 63
-conv2[56] = 64
-conv2[57] = 65
-conv2[58] = 66
-conv2[59] = 67
-conv2[60] = 68
-conv2[61] = 70
+def calculateSleepTime(tempo):
+    if tempo == 1:
+        length = 100
+    if tempo == 2:
+        length = 200
+    if tempo == 4:
+        length = 400
+    timeQuarterNote = (1) * 1 / tempo
+    timeSleep = timeQuarterNote / length
+    return timeSleep
 
 
-class DropMenu:
-    def __init__(self, name, label, menuOptions):
-
-        self.name = name
-        self.path = False
-        self.show = True
-        self.prevShow = True
-        self.menuOptions = menuOptions
-        self.clicked = StringVar()
-        if self.name == "Menu 1":
-            self.clicked.set("File")
-        if self.name == "Menu 2":
-            self.clicked.set("Play/Pause")
-        if self.name == "Menu 3":
-            self.clicked.set("Show/Hide")
-        if self.name == "Menu 10":
-            self.clicked.set("Mode Selection")
-        # self.clicked.set("File")
-        self.dropMenuObject = OptionMenu(root, self.clicked, *self.menuOptions)
-        self.dropMenuLabel = tkinter.Label(text=label, font=myFont_large)
-
-    def checkValue(self):
-        flag = self.clicked.get()
-        if flag == "Exit":
-            sys.exit()
-        if flag == "Choose Song File":
-            file_path = filedialog.askopenfilename()
-            self.clicked.set("File")
-            self.path = file_path
-        if flag == "Pause":
-            # self.clicked.set("Play/Pause")
-            self.path = False
-            # print("Pause")
-        if flag == "Play":
-            self.path = True
-            # self.clicked.set("Play/Pause")
-            # print("Play")
-        if flag == "Show":
-            self.show = True
-        if flag == "Hide":
-            self.show = False
+class guitarNote:
+    def __init__(self, ID, position, color, rectObject):
+        self.ID = ID
+        self.position = position
+        self.color = color
+        self.rectObject = rectObject
+        self.turnedOff = False
+        self.turnedOn = False
 
 
 class guitarWindow:
@@ -184,6 +35,7 @@ class guitarWindow:
         self.keyboard = None
         self.logo = None
         self.imgRef = []
+        self.restartProgramFlag = 0
         self.mainCanvas = Canvas(root, width=width, height=height, highlightthickness=1,
                                  highlightbackground="black")
 
@@ -194,7 +46,7 @@ class guitarWindow:
 
         self.current_tempo = tkinter.DoubleVar
         self.slider = tkinter.Scale(root, from_=1, to=10, orient='horizontal', variable=self.current_tempo)
-        self.restartButton = Button(root, text='\u21BA', command=restartProgram)
+        self.restartButton = Button(root, text='\u21BA', command= lambda: restartProgram(self))
         self.configureKeyboard()
         self.configureLogo()
         self.configureDialog()
@@ -297,33 +149,43 @@ class guitarWindow:
         self.mainCanvas.delete(str(keyNum)+'i')
         self.keyboard.delete(str(keyNum)+'i')
 
-    def createRect(self, keyNum, notetype, color='blue'):
-        keyNum=keyNum-1
-        if notetype == 'quarter':
-            length = 50
-        if notetype == 'half':
+    def createRect(self, keyNum, notetype, color, tempoAdjustment):
+        keyNum = conv[keyNum]
+        if notetype == 'Quarter':
             length = 100
-        if notetype == 'whole':
+        if notetype == 'Half':
             length = 200
+        if notetype == 'Whole':
+            length = 400
+        length = length/tempoAdjustment
         shift = 43.2 / 2
-        rect = self.mainCanvas.create_rectangle(15+shift*(keyNum), 0, 28+shift*(keyNum), length, fill=color)
-        self.rectDict[keyNum] = rect
+        ID = random.randrange(1000, 1000000)
+        rect = self.mainCanvas.create_rectangle(15 + shift * keyNum, -length, 28 + shift * keyNum, 0, fill=color, tag=str(ID))
+        newNote = guitarNote(ID, keyNum, color, rect)
+        self.rectDict[ID] = newNote
 
     def down(self):
         for elements in self.rectDict:
-            self.mainCanvas.move(self.rectDict[elements], 0, 2)
-        time.sleep(0.05)
+            self.mainCanvas.move(self.rectDict[elements].rectObject, 0, 1)
 
     def checkOn(self):
-        for index, elements in self.rectDict.items():
-            ycord = self.mainCanvas.coords(elements)
-            ycord = ycord[3]
-            if ycord > 570:
-                self.turnonKey(index, 'blue')
+        for elements in self.rectDict:
+            elements = self.rectDict[elements]
+            if elements.turnedOn is False and self.mainCanvas.coords(elements.rectObject)[3] > 570:
+                elements.turnedOn = True
+                self.turnonKey(elements.position, elements.color)
+                if beaglePluggedin == 1:
+                    hardwareOn(elements.position, elements.color)
+                    strip.show()
 
     def checkOff(self):
-        for index, elements in self.rectDict.items():
-            ycord = self.mainCanvas.coords(elements)
-            ycord = ycord[1]
-            if ycord > 568:
-                self.turnoffKey(index)
+        for elements in self.rectDict:
+            elements = self.rectDict[elements]
+            if elements.turnedOff is False and self.mainCanvas.coords(elements.rectObject)[1] > 570:
+                elements.turnedOff = True
+                self.turnoffKey(elements.position)
+                self.mainCanvas.delete(str(elements.ID))
+
+                if beaglePluggedin == 1:
+                    hardwareOn(elements.position, 'off')
+                    strip.show()
